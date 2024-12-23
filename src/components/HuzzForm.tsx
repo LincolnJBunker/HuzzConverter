@@ -19,14 +19,17 @@ export const HuzzForm = () => {
 
     const handleGenderApi = async (name: string) => {
         try {
+            setIsHuzzing(true);
             const response = await fetch(`https://gender-api.com/get?name=${name}&key=${key}`);
             const data = await response.json();
             console.log('data', data);
             setGender(data.gender);
             setAccuracy(data.accuracy);
+            setIsHuzzing(false)
             return data.gender; // Return the gender for immediate use
         } catch (error) {
             console.error('Error fetching gender data:', error);
+            setIsHuzzing(false);
             return null; // Return null if there's an error
         }
     };
@@ -84,7 +87,9 @@ export const HuzzForm = () => {
                             sx={{ marginBottom: 2}}
                         />
                         <Button variant="contained" onClick={handleSubmit}>Huzzify</Button>
-                        <LinearProgress sx={{ marginBottom: 2, padding: 0.1, borderRadius: 0.75 }} color="inherit"/>
+                        {isHuzzing &&
+                            <LinearProgress sx={{ marginBottom: 2, padding: 0.1, borderRadius: 0.75 }} color="inherit"/>
+                        }
                     </Box>
                     <Box
                         sx={{
