@@ -1,23 +1,45 @@
 import React, { useState } from "react";
 import { Box, Typography, Card, TextField, Button } from "@mui/material";
+// import {Client as GenderApiClient, ResultSingleName} from "gender-api.com-client";
 
 export const HuzzForm = () => {
     const [huzz, setHuzz] = useState('');
     const [huzzedWord, setHuzzedWored] = useState('');
+    const [gender, setGender] = useState('');
+    const [accuracy, setAccuracy] = useState('')
+
+    const key = import.meta.env.VITE_GENDER_API_KEY;
     
-    const handleSubmit = () => {
+    // const genderApiClient = new GenderApiClient(key || '');
+
+    const handleGenderApi = async (name: string) => {
+        try {
+            const response = await fetch(`https://gender-api.com/get?name=${name}&key=${key}`);
+            const data = await response.json();
+            console.log('data', data);
+            setGender(data.gender);
+            console.log('gender!', gender)
+            setAccuracy(data.accuracy);
+        } catch (error) {
+            console.error('Error fetching gender data:', error);
+        }
+    };
+    
+    const handleSubmit = async () => {
         let newWord;
 
         if (/girl/i.test(huzz)) {
             newWord = 'huzz'
-        }
-        else {
+        } else if (gender === 'female') {
+            newWord = 'huzz'
+        } else {
             newWord = huzz.slice(0, -1) + "uzz";
         }
-        console.log('new word', newWord)
         setHuzzedWored(newWord);
+
+        await handleGenderApi(huzz);
+
     }
-    console.log(huzzedWord)
     return (
         <React.Fragment>
             <Box
